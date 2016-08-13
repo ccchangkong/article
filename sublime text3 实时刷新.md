@@ -31,7 +31,7 @@
 
 配合view in brower（在浏览器中预览效果更佳），安装：ctrl+shift+p>view in brower按enter
 
-```md
+```json
 CTRL + ALT + F - Firefox
 CTRL + ALT + C - Chrome
 CTRL + ALT + I - Internet Explorer

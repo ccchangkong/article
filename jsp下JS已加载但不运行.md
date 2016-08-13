@@ -8,4 +8,4 @@
 
 明明静态页面的时候type写错是加载不到的。要不以后干脆不写type了，反正默认就是text/javascript。
 
-~~一个赛艇!~~[IKS)JO1BWJ]F28YB%_AY}TD.png](http://www.vastskycc.com/zb_users/upload/2016/06/201606271466990539909709.png)
+~~一个赛艇~~![exciting](http://www.vastskycc.com/zb_users/upload/2016/06/201606271466990539909709.png)

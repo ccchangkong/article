@@ -1,6 +1,6 @@
 # CSS reset by Eric A. Meyer
 
-《css权威指南》的作者Eric A. Meyer写的重置css.
+>《css权威指南》的作者Eric A. Meyer写的重置css.
 
 
 

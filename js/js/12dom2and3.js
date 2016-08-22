@@ -237,7 +237,7 @@ p1.parentNode.appendChild(fragment);
 
 //<span style="color: red;">Inserted text</span>
 var p1 = document.getElementById('p1'),
-	helloNode = p1.firstChild,
+	helloNode = p1.firstChild.firstChild,
 	worldNode = p1.lastChild,
 	range = document.createRange();
 range.setStart(helloNode, 2);
@@ -248,7 +248,7 @@ span.appendChild(document.createTextNode('Inserted text'));
 range.insertNode(span);
 
 var p1 = document.getElementById('p1'),
-	helloNode = p1.firstChild,
+	helloNode = p1.firstChild.firstChild,
 	worldNode = p1.lastChild,
 	range = document.createRange();
 range.selectNode(helloNode);
@@ -260,6 +260,11 @@ range.surroundContents(span);
 range.collapse(true);
 console.log(range.collapsed);
 
+range.compareBoundaryPoints();
+var newRange = range.cloneRange();
+
+range.detach(); //从文档中分离
+range = null; //解除引用
 //ie8+
 //<p id="p1"><b>hello</b> world</p>
 
@@ -280,16 +285,14 @@ range.moveToElementText(p1);
 //html
 alert(range.htmlText);
 //父节点
-var ancestor=range.parentElement();
+var ancestor = range.parentElement();
 
 //ie复杂
-range.moveStart('word',2);//起点移动2个字符
-range.moveEnd('character',1);//起点移动1个字符
-range.move('chrarcter',5);//移动5个字符，范围的起点和终点就一样了，必须创建新选区
-
-
+range.moveStart('word', 2); //起点移动2个字符
+range.moveEnd('character', 1); //起点移动1个字符
+range.move('chrarcter', 5); //移动5个字符，范围的起点和终点就一样了，必须创建新选区
 
 var range = document.body.createTextRange();
 var p1 = document.getElementById('p1');
-range.findText('hello');range.pasteHTML('<em>wow</em>');
-
+range.findText('hello');
+range.pasteHTML('<em>wow</em>');

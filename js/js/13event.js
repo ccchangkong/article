@@ -70,6 +70,8 @@ btn.attachEvent('onclick', function() {
 	alert(this === window); //true	
 });
 
+
+//添加多个事件处理程序
 var btn = document.getElementById('myBtn');
 btn.attachEvent('onclick', function() {
 	alert(1);
@@ -77,7 +79,7 @@ btn.attachEvent('onclick', function() {
 btn.attachEvent('onclick', function() {
 	alert(2);
 });
-
+//移除事件处理程序
 var btn = document.getElementById('myBtn');
 var handler = function() {
 	alert(this.id);
@@ -124,7 +126,7 @@ document.body.onclick = function(event) {
 	alert(this = document.body); //true
 	alert(event.target === document.getElementById('myBtn')); //true
 }
-
+//一个函数处理多个事件
 var btn = document.getElementById('myBtn');
 var handler = function(event) {
 	switch(event.type) {
@@ -144,9 +146,13 @@ btn.onclick = handler;
 btn.onmouseover = handler;
 btn.onmouseout = handler;
 
+
+
 var link = document.getElementById('myLink');
 link.onclick = function(event) {
-	event.preventDefault();
+	event.preventDefault();//阻止默认行为，需要cancelabel是true
+	event.stopPropagation();//阻止冒泡
+	alert(event.eventPhase);//确定事件处理程序的阶段
 };
 
 var EventUtil = {

@@ -70,7 +70,6 @@ btn.attachEvent('onclick', function() {
 	alert(this === window); //true	
 });
 
-
 //添加多个事件处理程序
 var btn = document.getElementById('myBtn');
 btn.attachEvent('onclick', function() {
@@ -122,11 +121,11 @@ btn.onclick = function(event) {
 };
 
 document.body.onclick = function(event) {
-	alert(event.currentTarget === document.body); //true
-	alert(this = document.body); //true
-	alert(event.target === document.getElementById('myBtn')); //true
-}
-//一个函数处理多个事件
+		alert(event.currentTarget === document.body); //true
+		alert(this = document.body); //true
+		alert(event.target === document.getElementById('myBtn')); //true
+	}
+	//一个函数处理多个事件
 var btn = document.getElementById('myBtn');
 var handler = function(event) {
 	switch(event.type) {
@@ -146,13 +145,11 @@ btn.onclick = handler;
 btn.onmouseover = handler;
 btn.onmouseout = handler;
 
-
-
 var link = document.getElementById('myLink');
 link.onclick = function(event) {
-	event.preventDefault();//阻止默认行为，需要cancelabel是true
-	event.stopPropagation();//阻止冒泡
-	alert(event.eventPhase);//确定事件处理程序的阶段
+	event.preventDefault(); //阻止默认行为，需要cancelabel是true
+	event.stopPropagation(); //阻止冒泡
+	alert(event.eventPhase); //确定事件处理程序的阶段
 };
 
 var EventUtil = {
@@ -207,12 +204,13 @@ link.onclick = function(event) {
 	EventUtil.preventDefault(event); //阻止默认行为
 };
 
-//load
+//load，完全加载后在window上触发
 EventUtil.addHandler(window, 'load', function(event) {
 	alert();
 });
 //<body onload='alert()'>
 
+//图像上也可以触发
 //<img src='smile.gif' onload='alert()'>
 EventUtil.addHandler(image, 'load', function(event) {
 	event = EventUtil.getEvent(event);
@@ -255,7 +253,7 @@ EventUtil.addHandler(window, 'unload', function(event) {
 });
 //<body onunload='alert()'>
 
-///resize
+//resize
 EventUtil.addHandler(window, 'resize', function(event) {
 	alert();
 }); //可能被频繁执行
@@ -365,6 +363,17 @@ var EventUtil = {
 			event.cancelable = true;
 		}
 	},
+	getRelatedTarget: function(event) {
+		if(event.relatedTarget) {
+			return event.relatedTarget;
+		} else if(event.toElement) {
+			return event.toElement;
+		} else if(event.fromElement) {
+			return event.fromElement;
+		} else {
+			return null;
+		}
+	},
 	getButton: function(event) { //add
 		if(document.implementation.hasFeature('MouseEvents', '2.0')) {
 			return event.button;
@@ -385,6 +394,14 @@ var EventUtil = {
 		}
 	}
 };
+var div = document.getElementById('myDiv');
+EventUtil.addHandler(div, 'mouseout', function(event) {
+	event = EventUtil.getEvent(event);
+	var target = EventUtil.getTarget(event);
+	var relatedTarget = EventUtil.getRelatedTarget(event);
+	alert('mouse out of' + target.tagName + 'to' + relatedTarget.tagName);
+});
+
 var div = document.getElementById('myDiv');
 EventUtil.addHandler(div, 'click', function(event) {
 	event = EventUtil.getEvent(event);
@@ -448,6 +465,17 @@ var EventUtil = {
 			event.stopPropagation();
 		} else {
 			event.cancelable = true;
+		}
+	},
+	getRelatedTarget: function(event) {
+		if(event.relatedTarget) {
+			return event.relatedTarget;
+		} else if(event.toElement) {
+			return event.toElement;
+		} else if(event.fromElement) {
+			return event.fromElement;
+		} else {
+			return null;
 		}
 	},
 	getButton: function(event) {
@@ -534,6 +562,17 @@ var EventUtil = {
 			event.stopPropagation();
 		} else {
 			event.cancelable = true;
+		}
+	},
+	getRelatedTarget: function(event) {
+		if(event.relatedTarget) {
+			return event.relatedTarget;
+		} else if(event.toElement) {
+			return event.toElement;
+		} else if(event.fromElement) {
+			return event.fromElement;
+		} else {
+			return null;
 		}
 	},
 	getButton: function(event) {
@@ -863,20 +902,20 @@ if(document.implementation.hasFeature('CustomEvents', '3.0')) {
 //创建了冒泡事件myevent
 
 //ie模拟click
-var btn=document.getElementById('myBtn');
+var btn = document.getElementById('myBtn');
 //创建事件对象
-var event=document.createEventObject();
+var event = document.createEventObject();
 //初始化事件对象
-event.screenX=100;
-event.screenY=0;
-event.clientX=0;
-event.clientY=0;
-event.ctrlKey=false;
-event.altKey=false;
-event.shiftKey=false;
-event.button=0;
+event.screenX = 100;
+event.screenY = 0;
+event.clientX = 0;
+event.clientY = 0;
+event.ctrlKey = false;
+event.altKey = false;
+event.shiftKey = false;
+event.button = 0;
 //触发事件
-btn.fireEvent('onclick',event);
+btn.fireEvent('onclick', event);
 
 //ie模拟keypress
 var textbox = document.getElementById('myTextbox');
@@ -889,4 +928,4 @@ event.shiftKey = false;
 event.keyCode = 65;
 
 //触发事件
-textbox.fireEvent('onkeypress',event);
+textbox.fireEvent('onkeypress', event);

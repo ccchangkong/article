@@ -131,7 +131,6 @@ var textbox = document.forms[0].elements['textbox1'];
 alert(textbox.value);
 textbox.value = 'new valuae';
 
-
 //选择文本
 var textbox = document.forms[0].elements['textbox1'];
 textbox.select();
@@ -139,5 +138,205 @@ textbox.select();
 EventUtil.addHandler(textbox, 'focus', function(event) {
 	event = EventUtil.getEvent(event);
 	var target = EventUtil.getTarget(event);
-target.select();
+	target.select();
 });
+
+var textbox = document.forms[0].elements['textbox1'];
+EventUtil.addHandler(textbox, 'select', function(event) {
+	alert('text selected' + textbox.value);
+});
+
+//ie9+
+function getSelectedText(textbox) {
+	return textbox.value.substring(textbox.selectionStart, textbox.selectionEnd);
+}
+//ie4-10
+function getSelectedText(textbox) {
+	if(typeof textbox.selectionStart == 'number') {
+		return textbox.value.substring(textbox.selectionStart, textbox.selectionEnd);
+	} else if(document.selection) {
+		return document.selection.createRange().text;
+	}
+}
+
+//选择部分文本
+//ie9+
+textbox.value = 'hello world';
+//选择所有文本
+textbox.setSelectionRange(0, textbox.value.length); //hello world
+//选择前3个字符
+textbox.setSelectionRange(0, 3); //'hel'
+//选择第4到第6个字符
+textbox.setSelectionRange(4, 7); //'o w'
+
+function selectText(textbox, startIndex, stopIndex) {
+	if(typeof textbox.selectionStart == 'number') {
+		return textbox.value.substring(startIndex, stopIndex);
+	} else if(textbox.createTextRange) {
+		var range = textbox.createTextRange();
+		range.collapse(true);
+		range.moveStart('character', startIndex);
+		range.moveEnd('character', stopIndex - startIndex);
+		range.select();
+	}
+	textbox.focus();
+}
+
+//例子
+textbox.value = 'hello world';
+//选择所有文本
+selectText(textbox, 0, textbox.value.length); //hello world
+//选择前3个字符
+selectText(textbox, 0, 3); //'hel'
+//选择第4到6个字符
+selectText(textbox, 4, 7); //'o w'
+
+//屏蔽所有按键操作
+EventUtil.addHandler(textbox, 'keypress', function(event) {
+	event = EventUtil.getEvent(event);
+	EventUtil.preventDefault(event);
+});
+
+//只允许输入数值
+EventUtil.addHandler(textbox, 'keypress', function(event) {
+	event = EventUtil.getEvent(event);
+	var target = EventUtil.getTarget(event);
+	var charCode = EventUtil.getCharCode(event);
+	if(!/\d/.test(String.fromCharCode(charCode)) && charCode > 9 && !event.ctrlKey) {
+		EventUtil.preventDefault(event)
+	}
+});
+
+var EventUtil = {
+	addHandler: function(element, type, handler) {
+		if(element.addEventListener) {
+			element.addEventListener(type, handler, false);
+		} else if(element.attachEvent) {
+			element.attachEvent('on' + type, handler);
+		} else {
+			element['on' + type] = handler;
+		}
+	},
+	getEvent: function(event) {
+		return event ? event : window.event;
+	},
+	getTarget: function(event) {
+		return event.target || event.srcElement;
+	},
+	preventDefault: function(event) {
+		if(event.preventDefault) {
+			event.preventDefault();
+		} else {
+			event.returnValue = false;
+		}
+	},
+	removeHandler: function(element, type, handler) {
+		if(element.removeEventListener) {
+			element.removeEventListener(type, handler, false);
+		} else if(element.detachEvent) {
+			element.detachEvent('on' + type, handler);
+		} else {
+			element['on' + type] = null;
+		}
+	},
+	stopPropagation: function(event) {
+		if(event.stopPropagation) {
+			event.stopPropagation();
+		} else {
+			event.cancelable = true;
+		}
+	},
+	getRelatedTarget: function(event) {
+		if(event.relatedTarget) {
+			return event.relatedTarget;
+		} else if(event.toElement) {
+			return event.toElement;
+		} else if(event.fromElement) {
+			return event.fromElement;
+		} else {
+			return null;
+		}
+	},
+	getButton: function(event) {
+		if(document.implementation.hasFeature('MouseEvents', '2.0')) {
+			return event.button;
+		} else {
+			switch(event.button) {
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 7:
+					return 0;
+				case 2:
+				case 6:
+					return 2;
+				case 4:
+					return 1;
+			}
+		}
+	},
+	getWheelDelta: function(event) {
+		if(event.wheelDelta) {
+			return(client.engine.opera && client.engine.opera < 9.5 ?
+				-event.wheelDelta : event.wheelDelta);
+		} else {
+			return -event.detail * 40;
+		}
+	},
+	getCharCode: function(event) {
+		if(typeof(event.charCode) == "number") {
+			return event.charCode;
+		} else {
+			return event.keyCode; //ie8-
+		}
+	},
+	//addclip
+	getClipboardText: function(event) {
+		var clipboardData = (event.clipboardData || window.clipboardData);
+		return clipboardData.getData('text');
+	},
+	setClipboardText: function(event, value) {
+		if(event.clipboardData) {
+			return event.clipboardData.setData('text/plain', value);
+		} else if(window.clipboardData) {
+			return window.clipboardData.setData('text', value);
+		}
+	},
+};
+
+EventUtil.addHandler(textbox, 'paste', function(event) {
+	event = EventUtil.getEvent(event);
+	var text = EventUtil.getClipboardText(event);
+	if(!/^\d*$/.test(text)) {
+		EventUtil.preventDefault(event);
+	}
+});
+
+//<input type="text" name="tel1" id="txtTel1" maxlength="3"/>
+//<input type="text" name="tel2" id="txtTel2" maxlength="3"/>
+//<input type="text" name="tel3" id="txtTel2" maxlength="4"/>
+
+(function() {
+	function tabForward(event) {
+		event = EventUtil.getEvent(event);
+		var target = EventUtil.getTarget(event);
+		if(target.value.length == target.maxLength) {
+			var form = target.form;
+			for(var i = 0, len = form.elements.length; i < len; i++) {
+				if(form.elements[i] == target) {
+					if(forms.elements[i + 1]) {
+						forms.elements[i + 1].focus();
+					}
+				}
+			}
+		}
+	}
+	var textbox1 = document.getElementById('TextTel1');
+	var textbox2 = document.getElementById('TextTel2');
+	var textbox1 = document.getElementById('TextTel3');
+	EventUtil.addHandler(textbox1, 'keyup', tabForward);
+	EventUtil.addHandler(textbox2, 'keyup', tabForward);
+	EventUtil.addHandler(textbox3, 'keyup', tabForward);
+
+})()

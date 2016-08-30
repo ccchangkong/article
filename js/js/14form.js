@@ -339,4 +339,57 @@ EventUtil.addHandler(textbox, 'paste', function(event) {
 	EventUtil.addHandler(textbox2, 'keyup', tabForward);
 	EventUtil.addHandler(textbox3, 'keyup', tabForward);
 
-})()
+})();
+
+//<input type="text" name="username" required/>
+//检查是否为必填字段
+var isUsernameRequired = document.forms[0].elements['username'].required;
+//检查是否支持
+var isRequiredSupported = 'required' in document.createElement('input');
+
+//其他输入类型
+//<input type="email" name="email"/>
+//<input type="url" name="homepage"/>
+
+var input = document.createElement('input');
+input.type = 'email';
+var isEmailSupported = (input.type == 'email');
+
+//用户只能输入0到100的值，且这个值必须时5的倍数；效果不一定
+//<input type="number" name="count" min='0' max='100' step='5'/>
+//ie10+
+input.stepUp(); //+1
+input.stepUp(5); //+5
+input.stepDown(); //-1
+input.stepDown(10); //-10
+
+//ie10+
+//<input type="number" name="count" pattern='\d+'/>
+var pattern = document.forms[0].elements['count'].pattern;
+var isPatternSupported = 'pattern' in document.createElement('input');
+if(document.forms[0].elements[0].checkValidity()) {
+	//continue
+} else {
+	//
+}
+if(document.forms[0].checkValidity()) {
+	//continue
+} else {
+	//
+}
+
+if(input.validity && !input.validity.valid) {
+	if(input.validity.valueMissing) {
+		alert('please specify a value')
+	} else if(input.validity.typeMismatch) {
+		alert('please enter an email address')
+	} else {
+		alert('value is invalid');
+	}
+}
+//<form novalidate></form>
+document.forms[0].noValidate=true;//禁用验证
+
+//<form novalidate><input type='submit' formnovalidate name='btn'></form>
+document.forms[0].elements['btn'].formNoValidate=true;
+

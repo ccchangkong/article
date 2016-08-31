@@ -388,8 +388,133 @@ if(input.validity && !input.validity.valid) {
 	}
 }
 //<form novalidate></form>
-document.forms[0].noValidate=true;//禁用验证
+document.forms[0].noValidate = true; //禁用验证
 
 //<form novalidate><input type='submit' formnovalidate name='btn'></form>
-document.forms[0].elements['btn'].formNoValidate=true;
+document.forms[0].elements['btn'].formNoValidate = true;
 
+//<select name="selects" id='selectss'>
+//	<option value="aa">1</option>
+//	<option>2</option>	
+//	<option value="">3</option>
+//</select>
+
+var selectbox = document.forms[0].elements['selects'];
+//不推荐
+var text = selectbox.options[0].firstChild.nodeValue; //选项的文本值
+var value = selectbox.options[0].getAttribute('value'); //选项的值
+//推荐
+var text = selectbox.options.text; //选项的文本值
+var value = selectbox.options.value; //选项的值
+
+var selectedOption = selectbox.options[selectbox.selectedIndex];
+//选中项之后
+var selectedIndex = selectbox.selectedIndex;
+var selectedOption = selectbox.options[selectedIndex];
+console.log('selected index:' + selectedIndex + '\nSelected text:' + selectedOption.text + '\nSelected value:' + selectedOption.value); //索引、文本、值
+
+selectbox.options[0].selected = true;
+
+function getSelectedOptions(selectbox) {
+	var result = new Array();
+	var option = null;
+	for(var i = 0, len = selectbox.options.length; i < len; i++) {
+		option = selectbox.options[i];
+		if(option.selected) {
+			result.push(option);
+		}
+	}
+	return result;
+}
+
+var selectbox = document.getElementById('selectss');
+var selectedOptions = getSelectedOptions(selectbox);
+var message = '';
+for(var i = 0, len = selectedOptions.length; i < len; i++) {
+	message += 'selected index:' + selectedOptions[i].index + '\nSelected text:' + selectedOptions[i].text + '\nSelected value:' + selectedOptions[i].value + '\n\n';
+}
+//DOM方法
+var newOption = document.createElement('option');
+newOption.appendChild(document.createTextNode('Option text'));
+newOption.setAttribute('value', 'Option value');
+selectbox.appendChild(newOption);
+
+//构造函数方法
+var newOption = new Option('Option text', 'Option value');
+selectbox.appendChild(newOption);
+
+//add方法
+var newOption = new Option('Option text', 'Option value');
+selectbox.add(newOption, undefined); //最佳方案
+//移除第一个选项
+selectbox.removeChild(selectbox.options[0]);
+selectbox.remove(0);
+selectbox.options[0] = null;
+
+//清除所有选项
+function clearSelectbox(selectbox) {
+	for(var i = 0, len = selectbox.options.length; i < len; i++) {
+		selectbox.remove(i);
+	}
+}
+//将第一个选择框的第一个选项移动到第二个选择框
+var selectbox1 = document.getElementById('selectbox1');
+var selectbox2 = document.getElementById('selectbox2');
+selectbox2.appendChild(selectbox1.options[0]);
+
+//DOM方法
+var optionToMove = selectbox.options[1];
+selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index - 1]);
+var optionToMove = selectbox.options[1];
+selectbox.insertBefore(optionToMove, selectbox.options[optionToMove.index + 2]);
+
+//表单序列化
+function serialize(form) {
+	var parts = [],
+		field = null,
+		len,
+		j,
+		optLen,
+		option,
+		optValue;
+	for(i = 0, len = form.elements.length; i < len; i++) {
+		field = form.elements[i];
+		switch(field.type) {
+			case 'select-one':
+			case 'select-multiple':
+				if(field.name.length) {
+					for(j = 0, optLen = field.options.length; j < optLen; j++) {
+						option = field.options[j];
+						if(option.selected) {
+							optValue = ''
+							if(option.hasAttribute) {
+								optValue = (option.hasAttribute('value') ? option.value : option.text);
+							} else {
+								optValue = (option.attributes['value'].specified ? option.value : option.text);
+							}
+							parts.push(encodeURIComponent(field.name) + '=' + encodeURIComponent(optValue));
+						}
+					}
+				}
+				break;
+			case undefined: //字段集
+			case 'file'://文件输入
+			case 'submit'://提交按钮
+			case 'reset'://重置按钮
+			case 'button'://自定义按钮
+				break;
+			case 'radio'://单选按钮
+			case 'checkbox'://复选框
+				if(!field.checked) {
+					break;
+				}
+				//执行默认操作
+			default:
+				//不包含没有名字的表单字段
+				if(field.name.length) {
+					parts.push(encodeURIComponent(field.name) + '=' + encodeURIComponent(field.value));
+				}
+		}
+	}
+	return parts.join("&");
+}

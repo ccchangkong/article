@@ -498,13 +498,13 @@ function serialize(form) {
 				}
 				break;
 			case undefined: //字段集
-			case 'file'://文件输入
-			case 'submit'://提交按钮
-			case 'reset'://重置按钮
-			case 'button'://自定义按钮
+			case 'file': //文件输入
+			case 'submit': //提交按钮
+			case 'reset': //重置按钮
+			case 'button': //自定义按钮
 				break;
-			case 'radio'://单选按钮
-			case 'checkbox'://复选框
+			case 'radio': //单选按钮
+			case 'checkbox': //复选框
 				if(!field.checked) {
 					break;
 				}
@@ -518,3 +518,40 @@ function serialize(form) {
 	}
 	return parts.join("&");
 }
+
+//blank.html
+//<!doctype html>
+//<html lang="en">
+//<head>
+//	<meta charset="UTF-8" />
+//	<title>Document</title>
+//</head>
+//<body>
+//	
+//</body>
+//</html>
+
+//<iframe src="blank.html" style='height:100px;width:100px;'>
+//	<script>
+//		EventUtil.addHandler(window,'load',function(){
+//			frames['richedit'].document.designMode='on';
+//		});
+//	</script>
+//</iframe>
+
+//<div class='editable' id='richedit' contenteditable></div>
+//打开和关闭
+var div = document.getElementById('richedit');
+div.contentEditable = 'true';//true,false,inherit
+
+//提交
+EventUtil.addHandler(form,'submit',function (event) {
+	event=EventUtil.getEvent(event);
+	var target=EventUtil.getTarget(event);
+	target.elements['comments'].value=frames['richedit'].document.body.innerHTML;
+});
+EventUtil.addHandler(form,'submit',function (event) {
+	event=EventUtil.getEvent(event);
+	var target=EventUtil.getTarget(event);
+	target.elements['comments'].value=document.getElementById('richedit').innerHTML;
+});

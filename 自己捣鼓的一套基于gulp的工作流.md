@@ -1,10 +1,10 @@
 # 自己捣鼓的一套基于gulp的工作流
 
 [git地址](https://github.com/ccchangkong/demo/tree/master/gulp)
-
+http://www.vastskycc.com/?id=20
 ## 目录结构
 
-![]()
+![](http://www.vastskycc.com/zb_users/upload/2016/09/201609071473217033349931.png)
 
 ## package.json注释
 
@@ -151,7 +151,9 @@ gulp.task('js', () => {
 });
 gulp.task('html', () => {
     gulp.src('src/tpl/*.html')
-        .pipe(rev())
+        .pipe(rev())//记得在引用地址后面加后缀，插件原本是ver=@@hash ,这里改成了v=@@hash
+      //<link rel="stylesheet" href="css/all.css?v=@@hash">
+      //<script src="js/all.js?v=@@hash"></script>
         .pipe(htmlmin({
             removeComments: true, //清除HTML注释
             collapseWhitespace: true, //压缩HTML
@@ -209,3 +211,56 @@ gulp.task('upload', () => {
 })
 ```
 
+## gulp-rev-append的坑
+
+之前还改过这个的正则
+
+```js
+//var FILE_DECL = /(?:href=|src=|url\()['|"]([^\s>"']+?)\?ver=([^\s>"']+?)['|"]/gi;
+var FILE_DECL = /(?:href=|src=|url\()['|"]([^\s>"']+?)\?v=([^\s>"']+?)['|"]/gi;
+```
+
+`ver->v`
+
+这个插件还有有些问题。。。
+
+#### 一是一行代码只能替换一次，html如果压缩过了，则只能替换一个；
+
+解决办法：在html压缩之前进行替换。
+
+#### 二是如果引入的路径为构建的路径，在当前目录下找不到资源的时候该插件无法使用；
+
+解决办法：修改源码，不使用hash算法，直接使用时间戳作为版本号。
+
+```js
+try {
+         data = fs.readFileSync(dependencyPath);
+         hash = crypto.createHash('md5');
+         hash.update(data.toString(), 'utf8');
+          var _rev=new Date().getTime();
+          line = line.replace(groups[2], _rev);
+        }
+```
+
+修改为
+
+```js
+ try {
+          var _rev=new Date().getTime();
+          line = line.replace(groups[2], _rev);
+        }
+```
+
+## 参考资料
+
+[一点 gulp教程](http://www.ydcss.com/)
+
+[gulp改造gulp-rev-append插件实现资源文件链接自动添加MD5版本号](http://blog.csdn.net/github_22022001/article/details/50754827)
+
+[gulp-rev-append Issues](https://github.com/bustardcelly/gulp-rev-append/issues)
+
+
+
+![](http://ww3.sinaimg.cn/mw690/6c7bfb12gw1f7kujgnjh6j23k02o0e83.jpg)
+
+![](http://ww2.sinaimg.cn/mw690/6c7bfb12gw1f7kujalfjuj23k02o07wj.jpg)

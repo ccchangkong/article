@@ -1,7 +1,8 @@
+//取得表单引用
 var form = document.getElementById('form1');
 
 var firstForm = document.forms[0]; //获取页面中的第一个表单
-var myForm = document.forms['form2']; //取得页面中名称为‘form2’的表单，不推荐
+var myForm = document.forms['form2']; //取得页面中名称为‘form2’的表单，容易出错，将来浏览器可能不支持，不推荐
 
 //<!--通用按钮-->
 //<input type="submit" value="submit form"/>
@@ -10,6 +11,7 @@ var myForm = document.forms['form2']; //取得页面中名称为‘form2’的�
 //<!--图像按钮-->
 //<input type="image" src="demo.gif" />
 
+//阻止表单提交
 var form = document.getElementById('myForm');
 EventUtil.addHandler(form, 'submit', function(event) {
 	event = EventUtil.getEvent(event); //取得事件对象
@@ -19,11 +21,12 @@ EventUtil.addHandler(form, 'submit', function(event) {
 var form = document.getElementById('myForm');
 form.submit(); //提交表单，以此方式提交表单不会触发submit事件，因此记得先验证表单
 
-// <!--通用重置按钮-->
+//<!--通用重置按钮-->
 //<input type="reset" value="reset form" />
 //<!--自定义重置按钮-->
 //<button type="reset">reset form</button>
 
+//阻止重置表单
 var form = document.getElementById('myForm');
 EventUtil.addHandler(form, 'reset', function(event) {
 	event = EventUtil.getEvent(event); //取得事件对象
@@ -123,7 +126,7 @@ EventUtil.addHandler(textbox, 'change', function(event) {
 });
 
 //<input type="text" size="25" maxlength="50" value="texts"/>
-//显示25个字符，但输入不能超过50个字符
+//要表现文本框，须将type属性设置为text，显示25个字符，但输入不能超过50个字符
 
 //<textarea name="" rows="25" cols="5"></textarea>
 
@@ -208,89 +211,6 @@ EventUtil.addHandler(textbox, 'keypress', function(event) {
 });
 
 var EventUtil = {
-	addHandler: function(element, type, handler) {
-		if(element.addEventListener) {
-			element.addEventListener(type, handler, false);
-		} else if(element.attachEvent) {
-			element.attachEvent('on' + type, handler);
-		} else {
-			element['on' + type] = handler;
-		}
-	},
-	getEvent: function(event) {
-		return event ? event : window.event;
-	},
-	getTarget: function(event) {
-		return event.target || event.srcElement;
-	},
-	preventDefault: function(event) {
-		if(event.preventDefault) {
-			event.preventDefault();
-		} else {
-			event.returnValue = false;
-		}
-	},
-	removeHandler: function(element, type, handler) {
-		if(element.removeEventListener) {
-			element.removeEventListener(type, handler, false);
-		} else if(element.detachEvent) {
-			element.detachEvent('on' + type, handler);
-		} else {
-			element['on' + type] = null;
-		}
-	},
-	stopPropagation: function(event) {
-		if(event.stopPropagation) {
-			event.stopPropagation();
-		} else {
-			event.cancelable = true;
-		}
-	},
-	getRelatedTarget: function(event) {
-		if(event.relatedTarget) {
-			return event.relatedTarget;
-		} else if(event.toElement) {
-			return event.toElement;
-		} else if(event.fromElement) {
-			return event.fromElement;
-		} else {
-			return null;
-		}
-	},
-	getButton: function(event) {
-		if(document.implementation.hasFeature('MouseEvents', '2.0')) {
-			return event.button;
-		} else {
-			switch(event.button) {
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 7:
-					return 0;
-				case 2:
-				case 6:
-					return 2;
-				case 4:
-					return 1;
-			}
-		}
-	},
-	getWheelDelta: function(event) {
-		if(event.wheelDelta) {
-			return(client.engine.opera && client.engine.opera < 9.5 ?
-				-event.wheelDelta : event.wheelDelta);
-		} else {
-			return -event.detail * 40;
-		}
-	},
-	getCharCode: function(event) {
-		if(typeof(event.charCode) == "number") {
-			return event.charCode;
-		} else {
-			return event.keyCode; //ie8-
-		}
-	},
 	//addclip
 	getClipboardText: function(event) {
 		var clipboardData = (event.clipboardData || window.clipboardData);
@@ -367,11 +287,13 @@ input.stepDown(10); //-10
 //<input type="number" name="count" pattern='\d+'/>
 var pattern = document.forms[0].elements['count'].pattern;
 var isPatternSupported = 'pattern' in document.createElement('input');
+//表单字段
 if(document.forms[0].elements[0].checkValidity()) {
 	//continue
 } else {
 	//
 }
+//表单
 if(document.forms[0].checkValidity()) {
 	//continue
 } else {
@@ -531,13 +453,12 @@ function serialize(form) {
 //</body>
 //</html>
 
-//<iframe src="blank.html" style='height:100px;width:100px;'>
+//<iframe src="blank.html" style='height:100px;width:100px;'></iframe>
 //	<script>
 //		EventUtil.addHandler(window,'load',function(){
 //			frames['richedit'].document.designMode='on';
 //		});
 //	</script>
-//</iframe>
 
 //<div class='editable' id='richedit' contenteditable></div>
 //打开和关闭

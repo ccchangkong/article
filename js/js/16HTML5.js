@@ -86,9 +86,9 @@ if (audio.canPlayType('audio/mpeg') {
 	//
 };
 
-var audio=new Audio('sound.mp3');
-EventUtil.addHandler(audio,'canplaythrough',function (event) {
-	audio.play();	
+var audio = new Audio('sound.mp3');
+EventUtil.addHandler(audio, 'canplaythrough', function(event) {
+	audio.play();
 });
 
 history.pushState({name:'N'},'N page' ,'n.html');//状态对象，新状态的标题，可选的相对URL
@@ -99,4 +99,5 @@ EventUtil.addHandler(window,'popstate',function (event) {
 		processState(state);
 	}
 });
+//更新当前状态
 history.replaceState({name:'G'},'g page');

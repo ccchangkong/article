@@ -197,3 +197,40 @@ xhr.onprogress=function (event) {
 };
 xhr.open('get', 'example.php', true);
 xhr.send(null);
+
+
+//cros
+function createCORSRequest (method,url) {
+	var xhr=new XMLHttpRequest();
+	if ('withCredentials' in xhr) {
+		xhr.open(method,url,true);
+	} else if(typeof XDomainRequest!='undefined'){
+		var xhr=new XDomainRequest();xhr.open(method,url);
+	}else{
+		xhr=null;
+	}
+	return xhr;
+}
+var request=createCORSRequest('get','http://www.bilibili.com/video/av6255062/');
+if (request) {
+	request.onload=function () {
+		//对request.responseText进行处理
+	};
+	request.send();
+}
+
+
+//img ping
+var img=new Image();
+img.onload=img.onerror=function () {
+	alert('done');
+};
+img.src='http://www.bilibili.com/test?name=n';
+
+//JSONP
+function handleResponse (response) {
+	console.log('you are at IP address'+ response.ip+',which is in'+response.city+','+response.region_name);
+}
+var script=document.createElement('script');
+script.src='http://freegeoip.net/json/?callback=handleResponse';
+document.body.insertBefore(script,document.body.firstChild);

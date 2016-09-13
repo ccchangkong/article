@@ -234,3 +234,38 @@ function handleResponse (response) {
 var script=document.createElement('script');
 script.src='http://freegeoip.net/json/?callback=handleResponse';
 document.body.insertBefore(script,document.body.firstChild);
+
+
+function createStreamingClient (url,progress,finished) {
+	var xhr=new XMLHttpRequest(),
+	received=0;
+	xhr.open('get'.url,true);
+	xhr.onreadystatechange=function () {
+		var result;
+		if (xhr.readyState==3) {
+			//只取得最新数据并调整计数器
+			result=xhr.responseText.substring(received);
+			received+=result.length;
+			//调用progress回调函数
+			progress(result);
+		} else if(xhr.readyState==4){
+			finished(xhr.responseText);
+		}
+	};
+	xhr.send(null);
+	return xhr;
+}
+var client=createStreamingClient('streaming.php',function (data) {
+	console.log('received:'+data);
+},function (data) {
+	console.log('done');
+});
+
+//sse
+var source=new EventSource('myevents.php');
+
+source.onmessage=function (event) {
+	var data=event.data;
+	//处理数据
+};
+source.close();

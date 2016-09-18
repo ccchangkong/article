@@ -298,44 +298,291 @@ function chunk(array, process, context) {
 	}, 100);
 }
 
-var processor={
-	timeoutId:null,
+var processor = {
+	timeoutId: null,
 	//实际进行处理的方法
-	performProcessing:function () {
+	performProcessing: function() {
 		//实际执行的代码
 	},
 	//初始处理调用的方法
-	process:function () {
+	process: function() {
 		clearTimeout(this.timeoutId);
-		var that=this;
-		this.timeoutId=setTimeout(function () {
+		var that = this;
+		this.timeoutId = setTimeout(function() {
 			that.performProcessing();
-		},100);
+		}, 100);
 	}
 };
 //尝试开始执行
 processor.process();
 
 //简化
-function throttle (method,context) {
+function throttle(method, context) {
 	clearTimeout(method.tId);
-	method.tId=setTimeout(function () {
+	method.tId = setTimeout(function() {
 		method.call(content);
-	},100);
+	}, 100);
 }
 
-
 //demo
-window.onresize=function () {
-	var div=document.getElementById('myDiv');
-	dic.style.height=div.offsetWidth+'px';
+window.onresize = function() {
+	var div = document.getElementById('myDiv');
+	dic.style.height = div.offsetWidth + 'px';
 };
 
 //butter
-function resizeDiv () {
-	var div=document.getElementById('myDiv');
-	dic.style.height=div.offsetWidth+'px';	
+function resizeDiv() {
+	var div = document.getElementById('myDiv');
+	dic.style.height = div.offsetWidth + 'px';
 }
-window.onresize=function () {
+window.onresize = function() {
 	throttle(resizeDiv);
 }
+
+function EventTarget() {
+	this.handlers = {};
+}
+
+EventTarget.prototype = {
+	constructor: EventTarget,
+	addHandler: function(type, handler) {
+		if(typeof this.handlers[type] == 'undefined') {
+			this.handlers[type] = [];
+		}
+		this.handlers[type].push(handler);
+	},
+	fire: function(event) {
+		if(!event.target) {
+			event.target = this;
+		}
+		if(this.handlers[event.type] instanceof Array) {
+			var handlers = this.handlers[event.type];
+			for(var i = 0, len = handlers.length; i < len; i++) {
+				handlers[i](event);
+			}
+		}
+	},
+	removeHandler: function(type, handler) {
+		if(this.handlers[type] instanceof Array) {
+			if(var i = 0, len = handlers.length; i < len; i++) {
+				if(handlers[i] === handler) {
+					break;
+				}
+			}
+			handlers.splice(i, 1);
+		}
+	}
+};
+
+//demo
+function handleMessage(event) {
+	console.log('msg received:' + event.message);
+}
+//创建一个对象
+var target = new EventTarget();
+//添加一个事件处理程序
+target.addHandler('message', handleMessage);
+//触发事件
+target.fire({
+	type: 'message',
+	message: 'hello'
+});
+//删除事件处理程序
+target.removeHandler('message', handleMessage);
+
+function Person(name, age) {
+	EventTarget.call(this);
+	this.name = name;
+	this.age = age;
+}
+inheritPrototype(Person, EventTarget);
+Person.prototype.say = function(message) {
+	this.fire({
+		type: 'message',
+		message: 'hello'
+	});
+};
+
+//
+function handleMessage(event) {
+	console.log(event.target.name + 'says:' + event.message);
+}
+//创建新person
+var person = new Person('N', 22);
+//添加一个事件处理程序
+target.addHandler('message', handleMessage);
+//再该对象上调用1个方法，它触发消息事件
+person.say('hi');
+//onmousemove事件
+EventUtil.addHandler(document, 'mousemove', function(event) {
+	var myDiv = document.getElementById('myDiv');
+	myDiv.style.left = event.clientX + 'px';
+	myDiv.style.top = event.clientY + 'px';
+});
+
+var DragDrop = function() {
+	var dragging = null;
+
+	function handleEvent(event) {
+		//获取事件 和目标
+		event = EventUtil.getEvent(event);
+		var target = EventUtil.getTarget(event);
+		//确定事件类型
+		switch(event.type) {
+			case 'mousedown':
+				if(target.className.indexOf('draggable') > -1) {
+					dragging = target;
+				}
+				break;
+			case 'mousemove':
+				if(dragging != null) {
+					//指定位置
+					dragging.style.left = event.clientX + 'px';
+					dragging.style.top = event.clientY + 'px';
+				}
+				break;
+			case 'mouseup':
+				dragging = null;
+				break;
+			default:
+				break;
+		}
+	};
+	return {
+		enable: function() {
+			EventUtil.addHandler(document, 'mousedown', handleEvent);
+			EventUtil.addHandler(document, 'mousemove', handleEvent);
+			EventUtil.addHandler(document, 'mouseup', handleEvent);
+		},
+		disable: function() {
+			EventUtil.removeHandler(document, 'mousedown', handleEvent);
+			EventUtil.removeHandler(document, 'mousemove', handleEvent);
+			EventUtil.removeHandler(document, 'mouseup', handleEvent);
+		}
+	}
+}();
+
+var DragDrop = function() {
+	var dragging = null,
+		diffX = 0,
+		diffY = 0;
+
+	function handleEvent(event) {
+		//获取事件 和目标
+		event = EventUtil.getEvent(event);
+		var target = EventUtil.getTarget(event);
+		//确定事件类型
+		switch(event.type) {
+			case 'mousedown':
+				if(target.className.indexOf('draggable') > -1) {
+					dragging = target;
+					diffX = event.clientX - target.offsetLeft;
+					diffY = event.clientY - target.offsetLTop;
+
+				}
+				break;
+			case 'mousemove':
+				if(dragging != null) {
+					//指定位置
+					dragging.style.left = (event.clientX - diffX) + 'px';
+					dragging.style.top = (event.clientY - diffY) + 'px';
+				}
+				break;
+			case 'mouseup':
+				dragging = null;
+				break;
+			default:
+				break;
+		}
+	};
+	return {
+		enable: function() {
+			EventUtil.addHandler(document, 'mousedown', handleEvent);
+			EventUtil.addHandler(document, 'mousemove', handleEvent);
+			EventUtil.addHandler(document, 'mouseup', handleEvent);
+		},
+		disable: function() {
+			EventUtil.removeHandler(document, 'mousedown', handleEvent);
+			EventUtil.removeHandler(document, 'mousemove', handleEvent);
+			EventUtil.removeHandler(document, 'mouseup', handleEvent);
+		}
+	}
+}();
+
+var DragDrop = function() {
+	var dragdrop = new EventTarget(),
+		dragging = null,
+		diffX = 0,
+		diffY = 0;
+
+	function handleEvent(event) {
+		//获取事件 和目标
+		event = EventUtil.getEvent(event);
+		var target = EventUtil.getTarget(event);
+		//确定事件类型
+		switch(event.type) {
+			case 'mousedown':
+				if(target.className.indexOf('draggable') > -1) {
+					dragging = target;
+					diffX = event.clientX - target.offsetLeft;
+					diffY = event.clientY - target.offsetLTop;
+					dragdrop.fire({
+						type: 'dragstart',
+						target: dragging,
+						x: event.clientX,
+						y: event.clientY
+					});
+				}
+				break;
+			case 'mousemove':
+				if(dragging != null) {
+					//指定位置
+					dragging.style.left = (event.clientX - diffX) + 'px';
+					dragging.style.top = (event.clientY - diffY) + 'px';
+					//触发自定义事件
+					dragdrop.fire({
+						type: 'drag',
+						target: dragging,
+						x: event.clientX,
+						y: event.clientY
+					});
+				}
+				break;
+			case 'mouseup':
+				dragdrop.fire({
+					type: 'dragend',
+					target: dragging,
+					x: event.clientX,
+					y: event.clientY
+				});
+				dragging = null;
+				break;
+			default:
+				break;
+		}
+	};
+
+	dragdrop.enable = function() {
+		EventUtil.addHandler(document, 'mousedown', handleEvent);
+		EventUtil.addHandler(document, 'mousemove', handleEvent);
+		EventUtil.addHandler(document, 'mouseup', handleEvent);
+	};
+	dragdrop.disable = function() {
+		EventUtil.removeHandler(document, 'mousedown', handleEvent);
+		EventUtil.removeHandler(document, 'mousemove', handleEvent);
+		EventUtil.removeHandler(document, 'mouseup', handleEvent);
+	};
+	return dragdrop;
+}();
+DragDrop.addHandler('dragstart', function(event) {
+	var status = document.getElementById('status');
+	status.innerHTML = 'started dragging' + event.target.id;
+});
+DragDrop.addHandler('drags', function(event) {
+	var status = document.getElementById('status');
+	status.innerHTML = '<br/>dragged' + event.target.id + 'to(' + event.x + ',' + event.y + ')';
+});
+DragDrop.addHandler('dragend', function(event) {
+	var status = document.getElementById('status');
+	status.innerHTML = '<br/>dropped' + event.target.id + 'to(' + event.x + ',' + event.y + ')';
+});

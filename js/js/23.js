@@ -45,3 +45,24 @@ var CookieUtil = {
 		this.set(name,'',new Date(0),path,domain,secure);
 	}
 };
+
+//demo
+//设置cookie
+CookieUtil.set('name','N');
+CookieUtil.set('book','jser');
+//读取cookie的值
+console.log(CookieUtil.get('name'));
+console.log(CookieUtil.get('book'));
+//删除cookie
+CookieUtil.unset('name');
+CookieUtil.unset('book');
+//设置cookie,包括它的路径、域、失效日期
+CookieUtil.set('name','n','/books/projs/','www.wrox.com',new Date("Jan 1,2010"));
+//删除刚刚设置的cookie
+CookieUtil.unset('name','/books/projs/','www.wrox.com');
+//设置安全的cookie
+CookieUtil.set('name','n',null,null,null,true);
+
+var SubCookieUtil={
+	
+}

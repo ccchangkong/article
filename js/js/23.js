@@ -166,3 +166,110 @@ SubCookieUtil.unset('data','name');
 //删除整个cookie
 SubCookieUtil.unsetAll('data');
  
+//<div style="behavior:url(#default#userData)" id=dadaStore''></div>
+
+//保存
+var dataStore=document.getElementById('dataStore');
+dataStore.setAttribute('name','N');
+dataStore.setAttribute('book','JSer');
+dataStore.save('BookInfo');
+//获取
+dataStore.load('BookInfo');
+console.log(dataStore.getAttribute('name'));//N
+console.log(dataStore.getAttribute('book'));//JSer
+//删除
+dataStore.removeAttribute('name');
+dataStore.removeAttribute('book');
+dataStore.save('BookInfo');
+//使用方法存储数据
+sessionStorage.setItem('name','N');
+//使用属性存储数据
+sessionStorage.book='JSer';
+//IE8 only
+sessionStorage.begin();
+sessionStorage.book='JSer';
+sessionStorage.commit();
+
+//使用方法读取数据
+var name =sessionStorage.getItem('name');
+//使用属性读取数据
+var book=sessionStorage.book;
+
+for (var i=0,len=sessionStorage.length;i<len;i++) {
+	var value=sessionStorage.getItem(key);
+	console.log(key+'='+value);
+}
+
+//使用delete删除一个值
+delete sessionStorage.name;
+//使用方法删除一个值
+sessionStorage.removeItem('book');
+
+//保存数据
+globalStorage['worx.com'].name='N';
+//获取数据
+var name= globalStorage['worx.com'].name;
+//worx.com及其子域都可以访问
+globalStorage['www.worx.com'].name='N';
+var name= globalStorage['www.worx.com'].name;
+
+
+//存储数据，任何人都可以访问-不要这么做
+globalStorage[''].name="N";
+//存储数据，可以让任何以.net结尾的域名访问-不要这么做
+globalStorage['net'].name='N';
+
+globalStorage['www.wrox.com'].name='N';
+globalStorage['www.wrox.com'].book='JSer';
+globalStorage['www.wrox.com'].removeItem('name');//记得删哦
+var book=globalStorage['www.wrox.com'].getItem('book');
+//localhost.host做属性名，稳
+globalStorage[location.host].name='N';
+var book=globalStorage[location.host].getItem('book');
+
+//使用方法存储数据
+localStorage.setItem('name','N');
+//使用属性存储数据
+localStorage.book='JSer';
+//使用方法读取数据
+var name=localStorage.getItem('name');
+//使用属性读取数据
+var book=localStorage.book;
+
+function getLocalStorage () {
+	if (typeof localStorage=='object') {
+		return localStorage;
+	} else if(typeof globalStorage=='object'){
+		return globalStorage[location.host];
+	}else{
+		throw new Error('local storage not available');
+	}
+}
+var storage=getLocalStorage();
+
+EventUtil.addHandler(document,'storage',function (event) {
+	console.log('storage changed for'+event.domain);
+});
+
+var indexedDB=window.indexedDB||window.msIndexedDB||window.mozIndexedDB||window.webkitIndexedDB;
+
+var request=indexedDB.open('admin');
+request.onerror=function (event) {
+	console.log('something bad happend while trying to open:'+event.target.errorCode);
+};
+request.onsuccess=function (event) {
+	database=event.target.result;
+};
+
+//设置版本号
+if (database.version!='1.0') {
+	request=database.setVersion('1.0');
+	request.onerror=function (event) {
+		console.log('set version error:'+event.target.errorCode);
+	};
+	request.onsuccess=function (event) {
+		console.log('complete.Database name:'+database.name+',version:'+database.version);
+	};
+} else{
+	console.log('Database already initialized.Database name:'+database.name+',version:'+database.version)
+}

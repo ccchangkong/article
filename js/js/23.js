@@ -327,3 +327,163 @@ transaction.onerror = function(event) {
 transaction.oncomplete = function(event) {
 	//整个事务都成功完成了
 };
+
+var store = db.transaction('users').objectStore('users'),
+	request = store.openCursor();
+request.onerror = function(event) {
+	//处理失败
+};
+request.onsuccess = function(event) {
+	//处理成功
+};
+
+//检索某个结果的信息
+request.onsuccess = function(event) {
+	var cursor = event.target.result;
+	if(cursor) {
+		console.log('key:' + cursor.key + ',value:' + JSON.stringify(cursor.value));
+	}
+};
+
+request.onsuccess = function(event) {
+	var cursor = event.target.result,
+		value, updateRequest;
+	if(cursor) {
+		if(cursor.key == 'foo') {
+			value = cursor.value; //取得当前的值
+			value.password = 'npw'; //更新新值
+
+			updateRequest = cursor.update(value); //请求保存更新
+			updateRequest.onsuccess = function() {
+				//处理成功
+			};
+			updateRequest.onerror = function(event) {
+				//处理失败
+			};
+		}
+	}
+};
+
+request.onsuccess = function(event) {
+	var cursor = event.target.result,
+		value, deleteRequest;
+	if(cursor) {
+		if(cursor.key == 'foo') {
+			deleteRequest = cursor.delete(value); //请求删除当前项
+			deleteRequest.onsuccess = function() {
+				//处理成功
+			};
+			deleteRequest.onerror = function(event) {
+				//处理失败
+			};
+		}
+	}
+};
+
+request.onsuccess = function(event) {
+	var cursor = event.target.result;
+	if(cursor) {
+		console.log('key:' + cursor.key + ',value:' + JSON.stringify(cursor.value));
+		cursor.continue(); //移动到下一项
+	} else {
+		console.log('done');
+	}
+};
+
+var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+var store = db.transaction('users').objectStore('users'),
+	range = IDBKeyRange.bound('007', 'ace'), //输出的对象的键为007到ace
+	request = store.openCursor(range);
+request.onsuccess = function(event) {
+	var cursor = event.target.result;
+	if(cursor) {
+		console.log('key:' + cursor.key + ',value:' + JSON.stringify(cursor.value));
+		cursor.continue(); //移动到下一项
+	} else {
+		console.log('done');
+	}
+};
+
+var IDBCursor = window.IDBCursor || window.webkitIDBCursor;
+var store = db.transaction('users').objectStore('users'),
+	request = store.openCursor(null, IDBCursor.NEXT_NO_DUPLICATE);
+var store = db.transaction('users').objectStore('users'),
+	request = store.openCursor(null, IDBCursor.PREV);
+
+var store = db.transaction('users').objectStore('users'),
+	index = store.createIndex('username', 'username', {
+		unique: false
+	}); //索引的名字，索引的属性的名字，键再所有纪录中是否唯一
+//取得索引
+var store = db.transaction('users').objectStore('users'),
+	index = store.index('username');
+
+var store = db.transaction('users').objectStore('users'),
+	request = store.index('username'),
+	request = index.openCursor();
+request.onsuccess = function(event) {
+	//处理成功
+};
+
+var store = db.transaction('users').objectStore('users'),
+	request = store.index('username'),
+	request = index.openKeyCursor();
+request.onsuccess = function(event) {
+	//处理成功
+	//event.result.key中保存索引键,而event.result.value中保存主键
+};
+var store = db.transaction('users').objectStore('users'),
+	request = store.index('username'),
+	request = index.get('007');
+request.onsuccess = function(event) {
+	//处理成功
+};
+request.onerror = function(event) {
+	//处理失败
+}; 
+
+var store = db.transaction('users').objectStore('users'),
+	request = store.index('username'),
+	request = index.getKey('007');
+request.onsuccess = function(event) {
+	//处理成功
+	//event.result.key中保存索引键，而event.result.value中保存主键
+};
+var store=db.transaction('users').objectStore('users'),
+indexNames=store.indexNames,
+index,
+i=0,
+len=indexNames.length;
+while (i<len){
+	index=store.index(indexNames[i++]);
+	console.log('index name:'+index.name+',keypath:'+index.keyPath+',unique:'+index.unique);
+}
+
+var store=db.transaction('users').objectStore('users');
+store.deleteIndex('username');
+
+var request,database;
+request=indexedDB.open('admin');
+request.onsuccess=function (event) {
+	database=event.target.result;
+	database.onversionchange=function () {
+		database.close();
+	};
+};
+
+var request=database.setVersion('2.0');
+request.onblocked=function () {
+	console.log('please close all tabs and try again');
+};
+request.onsuccess=function () {
+	//处理成功，继续
+};
+
+
+
+
+
+
+
+
+

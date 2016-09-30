@@ -154,8 +154,6 @@ module.exports = config;
     "build": "webpack --progress --hide-modules --config webpack.prod.config.js",
   }
 ```
-编译sass可能会出错，把node-sass卸了重装可能有用。
-
 应为
 
 ```json
@@ -164,6 +162,8 @@ module.exports = config;
     "build": "webpack --progress --hide-modules --config webpack.prod.config.js"
   }
 ```
+
+编译sass可能会出错，把node-sass卸了重装可能有用。
 
 ### webpack.config.js
 

@@ -49,6 +49,12 @@ else if (originFontSize > (32 * multiplier - 16)) {
 
 给元素设置` -webkit-text-size-adjust: none;`可禁用Text Autosizer，这个属性还能使得我们在移动端使用小于12px的字体。此属性在桌面版中无效。
 
+## 参考资料
+
+[flexible.js字体大小诡异现象解析及解决方案](http://www.cnblogs.com/axl234/p/5895347.html)
+
+[网页字体缩放样式-webkit-text-size-adjust的用法详解](http://www.aimks.com/web-page-font-scaling-style-webkit-usage-details.html)
+
 以上。
 
 ![](http://ww1.sinaimg.cn/large/6c7bfb12gw1f8t0gi0dhoj20dr0gojso.jpg)

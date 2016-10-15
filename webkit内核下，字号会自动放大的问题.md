@@ -8,7 +8,7 @@
 
 ## 一探究竟
 
-网上一同搜索，还真搜出来了。
+网上一通搜索，还真搜出来了。
 
 首先，这个不是bug，是Chromium内核提高移动端文本可读性的一个特性，叫做这个特性被称做「Text Autosizer」，又称「Font Boosting」、「Font Inflation」，具体可以见这个文档[Chromium’s Text Autosizer](https://docs.google.com/document/d/1PPcEwAhXJJ1TQShor29KWB17KJJq7UJOM34oHwYP3Zg/edit)，计算规则则可以在这里看到[TextAutosizer.cpp](https://cs.chromium.org/chromium/src/third_party/WebKit/Source/core/layout/TextAutosizer.cpp),在文档里可以看到计算公式如下
 

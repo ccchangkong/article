@@ -1,6 +1,7 @@
 # 基于vue+muse-ui的简历生成器
 
-[github]([https://github.com/ccchangkong/ccresume/](https://github.com/ccchangkong/ccresume/))
+[项目地址](https://github.com/ccchangkong/ccresume)
+
 
 [预览](https://ccchangkong.github.io/ccresume/)
 

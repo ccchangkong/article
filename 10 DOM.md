@@ -14,7 +14,7 @@
 
 操作节点`appendChild()` 在末尾添加节点，并返回新增的节点；`insertBefore()` 在某个特定位置上添加节点；`replaceChild()`替换节点；`cloneNode()` 复制节点，可执行深复制
 
-## 10.1.2Document类型
+###10.1.2Document类型
 
 `document.title` 文档标题；`document.URL` URL；`document.domain` 域名；
 

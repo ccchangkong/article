@@ -4,7 +4,7 @@
 
 ## 路径相关
 
-###css内引用的资源
+### css内引用的资源
 
 `build` -> `utils.js`
 
@@ -27,7 +27,7 @@
   }
 ```
 
-###本地访问
+### 本地访问
 
 `config` -> `index.js`
 
@@ -194,7 +194,7 @@ const webpackConfig = merge(baseWebpackConfig, {
   }
 ```
 
-###关闭SourceMap
+### 关闭SourceMap
 
 `config` -> `index.js`
 

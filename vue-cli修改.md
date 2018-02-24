@@ -108,6 +108,33 @@ this.$http
 });
 ```
 
+### 路由加载切换
+
+> 异步加载可以加快首屏加载速度，但是在开发阶段会导致热加载变慢，所以根据NODE_ENV来判断，开发环境不使用异步
+
+```js
+let _import
+if (process.env.NODE_ENV === 'development') {
+  _import = file => require('@/components/' + file + '.vue').default
+}
+if (process.env.NODE_ENV === 'production') {
+  _import = file => () => import('@/components/' + file + '.vue')
+}
+
+routes: [
+    {
+        path: '/',
+        name: 'Index',
+        component: _import('Approve/Index'),
+        meta: {
+            level: 1
+        }
+    },
+]
+```
+
+
+
 ## 打包
 
 ### dll打包
